@@ -32,31 +32,29 @@ export default function AuthInputs() {
 
   return (
     <div id="auth-inputs">
-      <ControlDiv>          
-          <Input
-            label="Email"
-            invalid={emailNotValid}
-            type="email"
-            className={emailNotValid ? "invalid" : undefined}
-            onChange={(event) => handleInputChange("email", event.target.value)}
-          />
-          <Input
-            label="Password"
-            invalid={passwordNotValid}
-            type="password"
-            className={passwordNotValid ? "invalid" : undefined}
-            onChange={(event) =>
-              handleInputChange("password", event.target.value)
-            }
-          />
+      <ControlDiv>
+        <Input
+          label="Email"
+          invalid={emailNotValid}
+          type="email"
+          className={emailNotValid ? "invalid" : undefined}
+          onChange={(event) => handleInputChange("email", event.target.value)}
+        />
+        <Input
+          label="Password"
+          invalid={passwordNotValid}
+          type="password"
+          className={passwordNotValid ? "invalid" : undefined}
+          onChange={(event) =>
+            handleInputChange("password", event.target.value)
+          }
+        />
       </ControlDiv>
       <div className="actions">
         <button type="button" className="text-button">
           Create a new account
         </button>
-        <Button onClick={handleLogin}>
-          Sign In
-        </Button>
+        <Button onClick={handleLogin}>Sign In</Button>
       </div>
     </div>
   );

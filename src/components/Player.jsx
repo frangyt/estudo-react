@@ -1,10 +1,10 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function Player() {
   const inputPlayer = useRef();
   const [playerName, setPlayerName] = useState("unknown entity");
 
-  function handleClick() {    
+  function handleClick() {
     setPlayerName(inputPlayer.current.value);
     inputPlayer.current.value = "";
     inputPlayer.current.focus();

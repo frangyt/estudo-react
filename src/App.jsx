@@ -1,17 +1,34 @@
-import Player from './components/Player.jsx';
-import TimerChallenge from './components/TimerChallenge.jsx';
+import { useState } from "react";
+import NewProject from "./components/NewProject.jsx";
+import Sidebar from "./components/Sidebar.jsx";
+import StandardMain from "./components/StandardMain.jsx";
 
 function App() {
+  const [projectsState, setProjectsState] = useState({
+    selectedProjectId: undefined,
+    projects: [],
+  });
+
+  function handleStartNewProject() {
+    setProjectsState((prevState) => ({
+      ...prevState,
+      selectedProjectId: null,
+    }));
+  }
+
+  let content;
+
+  if (projectsState.selectedProjectId === null) {
+    content = <NewProject />;
+  } else if (projectsState.selectedProjectId === undefined) {
+    content = <StandardMain onStartProject={handleStartNewProject} />;
+  }
+
   return (
-    <>
-      <Player />
-      <div id="challenges">
-        <TimerChallenge title="easy" targetTime={1} />
-        <TimerChallenge title="medium" targetTime={5} />
-        <TimerChallenge title="hard" targetTime={10} />
-        <TimerChallenge title="impossible" targetTime={15} />
-      </div>
-    </>
+    <main className="h-screen my-8 flex gap-8">
+      <Sidebar onStartProject={handleStartNewProject} />
+      {content}
+    </main>
   );
 }
 

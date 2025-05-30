@@ -1,5 +1,5 @@
 import noProjectImage from "../assets/no-projects.png";
-import Button from "./Button.jsx";
+import Button from "./utils/Button.jsx";
 
 export default function StandardMain({ onStartProject }) {
   return (

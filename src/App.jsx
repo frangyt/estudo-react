@@ -1,121 +1,78 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import NewProject from "./components/project/NewProject.jsx";
-import Project from "./components/project/Project.jsx";
-import Sidebar from "./components/Sidebar.jsx";
-import StandardMain from "./components/StandardMain.jsx";
+import Header from './components/Header.jsx';
+import Shop from './components/Shop.jsx';
+import { DUMMY_PRODUCTS } from './dummy-products.js';
 
 function App() {
-  const [projectsState, setProjectsState] = useState({
-    selectedProjectId: undefined,
-    projects: [],
-    tasks: [],
+  const [shoppingCart, setShoppingCart] = useState({
+    items: [],
   });
 
-  function handleAddTask(text) {
-    setProjectsState((prevState) => {
-      const taskId = Math.random().toString(36).substring(2, 9); // Generate a random ID
-      const newTask = {
-        text: text,
-        id: taskId,
-        projectId: prevState.selectedProjectId,
-      };
+  function handleAddItemToCart(id) {
+    setShoppingCart((prevShoppingCart) => {
+      const updatedItems = [...prevShoppingCart.items];
+
+      const existingCartItemIndex = updatedItems.findIndex(
+        (cartItem) => cartItem.id === id
+      );
+      const existingCartItem = updatedItems[existingCartItemIndex];
+
+      if (existingCartItem) {
+        const updatedItem = {
+          ...existingCartItem,
+          quantity: existingCartItem.quantity + 1,
+        };
+        updatedItems[existingCartItemIndex] = updatedItem;
+      } else {
+        const product = DUMMY_PRODUCTS.find((product) => product.id === id);
+        updatedItems.push({
+          id: id,
+          name: product.title,
+          price: product.price,
+          quantity: 1,
+        });
+      }
 
       return {
-        ...prevState,
-        tasks: [newTask, ...prevState.tasks],
+        items: updatedItems,
       };
     });
   }
 
-  function handleDeleteTask(taskId) {
-    setProjectsState((prevState) => ({
-      ...prevState,
-      tasks: prevState.tasks.filter(
-        (task) =>
-          task.id !== taskId
-      ),
-      selectedProjectId: prevState.selectedProjectId,
-    }));
-  }
+  function handleUpdateCartItemQuantity(productId, amount) {
+    setShoppingCart((prevShoppingCart) => {
+      const updatedItems = [...prevShoppingCart.items];
+      const updatedItemIndex = updatedItems.findIndex(
+        (item) => item.id === productId
+      );
 
-  function handleStartNewProject() {
-    setProjectsState((prevState) => ({
-      ...prevState,
-      selectedProjectId: null,
-    }));
-  }
-
-  function handleAddProject(projectData) {
-    setProjectsState((prevState) => {
-      const projectId = Math.random().toString(36).substring(2, 9); // Generate a random ID
-      const newProject = {
-        ...projectData,
-        id: projectId,
+      const updatedItem = {
+        ...updatedItems[updatedItemIndex],
       };
+
+      updatedItem.quantity += amount;
+
+      if (updatedItem.quantity <= 0) {
+        updatedItems.splice(updatedItemIndex, 1);
+      } else {
+        updatedItems[updatedItemIndex] = updatedItem;
+      }
 
       return {
-        ...prevState,
-        selectedProjectId: undefined,
-        projects: [...prevState.projects, newProject],
+        items: updatedItems,
       };
     });
-  }
-
-  function handleCancel() {
-    setProjectsState((prevState) => ({
-      ...prevState,
-      selectedProjectId: undefined,
-    }));
-  }
-
-  function handleSelectProject(projectId) {
-    setProjectsState((prevState) => ({
-      ...prevState,
-      selectedProjectId: projectId,
-    }));
-  }
-
-  function handleDeleteProject() {
-    setProjectsState((prevState) => ({
-      ...prevState,
-      projects: prevState.projects.filter(
-        (project) => project.id !== prevState.selectedProjectId
-      ),
-      selectedProjectId: undefined,
-    }));
-  }
-
-  const selectedProject = projectsState.projects.find(
-    (project) => project.id === projectsState.selectedProjectId
-  );
-
-  let content = (
-    <Project
-      onAddTask={handleAddTask}
-      onDeleteTask={handleDeleteTask}
-      project={selectedProject}
-      onDelete={handleDeleteProject}
-      tasks={projectsState.tasks}
-    />
-  );
-
-  if (projectsState.selectedProjectId === null) {
-    content = <NewProject onAdd={handleAddProject} onCancel={handleCancel} />;
-  } else if (projectsState.selectedProjectId === undefined) {
-    content = <StandardMain onStartProject={handleStartNewProject} />;
   }
 
   return (
-    <main className="h-screen my-8 flex gap-8">
-      <Sidebar
-        onSelectProject={handleSelectProject}
-        projects={projectsState.projects}
-        onStartProject={handleStartNewProject}
-        selectedProjectId={projectsState.selectedProjectId}
+    <>
+      <Header
+        cart={shoppingCart}
+        onUpdateCartItemQuantity={handleUpdateCartItemQuantity}
       />
-      {content}
-    </main>
+      <Shop onAddItemToCart={handleAddItemToCart} />
+    </>
   );
 }
 
